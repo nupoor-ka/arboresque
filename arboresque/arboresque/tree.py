@@ -18,11 +18,13 @@ class DecisionTreeClassifier:
         X = np.asarray(X)
         y = np.asarray(y)
         self.classes_, y_encoded = np.unique(y, return_inverse=True) # to prevent negative labels, labelling from 
+        self.n_classes = len(self.classes_)
         root = build_tree(
             X, y_encoded,
             criterion=self.criterion_func,
             leaf_val_func=None, # not needed for classification
             task="classification",
+            n_classes=self.n_classes,
             max_depth=self.max_depth,
             min_samples_split=self.min_samples_split,
         )
@@ -76,6 +78,12 @@ class DecisionTreeClassifier:
         y = np.asarray(y)
         y_pred = self.predict(X)
         return np.mean(y_pred==y)
+    
+    def get_depth(self):
+        return self.tree_.get_depth()
+    
+    def get_n_leaves(self):
+        return self.tree_.get_n_leaves()
 
 class DecisionTreeRegressor:
     def __init__(self, criterion="mse", max_depth=None, min_samples_split=2):
@@ -140,3 +148,9 @@ class DecisionTreeRegressor:
         if v==0:
             return 1
         return 1 - (u/v)
+    
+    def get_depth(self):
+        return self.tree_.get_depth()
+    
+    def get_n_leaves(self):
+        return self.tree_.get_n_leaves()
