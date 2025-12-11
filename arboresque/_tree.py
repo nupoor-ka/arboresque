@@ -1,4 +1,5 @@
 import numpy as np
+from collections import deque
 from ._split import find_best_split
 
 """
@@ -28,30 +29,30 @@ class Tree:
     def __init__(self, root=None):
         self.root = root
     def get_depth(self):
-        q = [self.root]
-        depth = 0
+        if self.root is None:
+            return 0
+        q = deque([self.root])
+        depth = -1 # first split creates first layer, not just root node
         while q:
+            depth+=1
             l = len(q)
-            for i in range(l):
-                rt = q[0]
-                q.pop(0)
+            for _ in range(l):
+                rt = q.popleft()
                 if rt.left:
                     q.append(rt.left)
                 if rt.right:
                     q.append(rt.right)
-            depth+=1
         return depth
     def get_n_leaves(self):
-        q = [self.root]
+        q = deque([self.root])
         n_leaves = 0
         while q:
             l = len(q)
             for i in range(l):
-                rt = q[0]
+                rt = q.popleft()
                 if rt.is_leaf:
                     n_leaves+=1
                     continue
-                q.pop(0)
                 if rt.left:
                     q.append(rt.left)
                 if rt.right:
@@ -68,6 +69,7 @@ def build_tree(X, y, criterion, n_total_samples, leaf_val_func, task, n_classes=
     output is root of tree
     recursive function
     """
+    # print(f"Building node: depth={depth}, n_samples={len(y)}") #########
     n_samples = len(y)
     
     pure_node = False

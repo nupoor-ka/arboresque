@@ -7,8 +7,9 @@ def find_best_split(X, y, criterion, n_total_samples, min_samples_leaf=1, min_im
     that criterion determines whether regression or classification
     best feature, best split point or threshold, information gain
     """
+    # print(f"Finding split: n_samples={len(y)}, n_features={X.shape[1]}")
     n_samples, n_features = X.shape
-    if n_samples <= 1: # ideally this should be checked in the build function
+    if n_samples <= 2: # checking with max of min split in build and fit too
         return None, None, 0.0
     
     parent_impurity = criterion(y)
